@@ -2,21 +2,26 @@ from fastapi import FastAPI, WebSocket, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+
 from app.services.websocket_manager import manager
 from app.services.redis_pubsub import start_redis_listener
 
 from app.api.routes import auth, users, messages, groups
+from app.api.routes.upload import router as upload_router
 
 app = FastAPI()
 
 templates = Jinja2Templates(directory="app/templates")
+
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
 app.include_router(auth.router, prefix="/auth")
 app.include_router(users.router, prefix="/users")
 app.include_router(messages.router, prefix="/messages")
 app.include_router(groups.router, prefix="/groups")
+app.include_router(upload_router)
 
 
 @app.on_event("startup")
@@ -28,9 +33,10 @@ def startup():
 async def login_page(request: Request):
     return templates.TemplateResponse(request, "login.html", {"request": request})
 
+
 @app.get("/register", response_class=HTMLResponse)
 async def register_page(request: Request):
-    return templates.TemplateResponse( request,"register.html", {"request": request})
+    return templates.TemplateResponse(request, "register.html", {"request": request})
 
 
 @app.get("/chat", response_class=HTMLResponse)
@@ -50,8 +56,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
     try:
         while True:
             data = await websocket.receive_json()
-
-            await manager.send_personal_message(data["receiver"], data)
+            await manager.handle_message(data)  # ✅ FIXED
 
     except:
         manager.disconnect(user_id, websocket)

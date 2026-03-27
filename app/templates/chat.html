@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Chat</title>
-    <link rel="stylesheet" href="/static/chat.css?v=5" />
+    <link rel="stylesheet" href="/static/chat.css?v=7" />
   </head>
   <body>
     <div class="app">
@@ -17,7 +17,6 @@
 
         <div class="sidebar-header">
           <h2>Chats</h2>
-
           <div class="actions">
             <button onclick="goToGroups()">Add Group</button>
             <button onclick="logout()">Logout</button>
@@ -34,33 +33,33 @@
       <div class="chat-area">
         <div id="chat-header">Select a chat</div>
 
-        <div id="group-actions" class="group-actions hidden">
-          <div class="group-left">
-            <span id="group-name"></span>
-
-            <button class="members-toggle" onclick="toggleMembersDropdown()">
-              Members ▼
-            </button>
-
-            <div id="membersDropdown" class="members-dropdown hidden"></div>
-          </div>
-
-          <div class="group-controls">
-            <input id="newMember" placeholder="Add member..." />
-            <button onclick="addMember()">Add</button>
-          </div>
-        </div>
-
         <div id="messages"></div>
 
         <div class="input-area">
           <input id="messageInput" placeholder="Type message..." />
-          <button onclick="sendMessage()">Send</button>
+
+          <input type="file" id="imageInput" accept="image/*" hidden />
+
+          <button
+            class="icon-btn"
+            onclick="document.getElementById('imageInput').click()"
+          >
+            📎Image
+          </button>
+
+          <span id="fileName" class="file-name"></span>
+
+          <div id="previewContainer" class="preview hidden">
+            <img id="previewImage" />
+            <button onclick="removeImage()">❌</button>
+          </div>
+
+          <button onclick="sendCombined()">Send</button>
         </div>
       </div>
     </div>
 
-    <script src="/static/chat.js?v=20"></script>
+    <script src="/static/chat.js?v=23"></script>
 
     <script>
       function goToGroups() {

@@ -14,10 +14,10 @@ async def send_message(sender: str, message: MessageCreate):
         "sender": sender,
         "receiver": message.receiver,
         "content": message.content,
+        "image": None,
     }
 
     result = await messages_collection.insert_one(msg)
-
     msg["_id"] = str(result.inserted_id)
 
     redis_client.publish("chat", json.dumps(msg))
@@ -50,10 +50,10 @@ async def send_group_message(sender: str, message: dict):
         "sender": sender,
         "group": message["group"],
         "content": message["content"],
+        "image": None,
     }
 
     result = await messages_collection.insert_one(msg)
-
     msg["_id"] = str(result.inserted_id)
 
     redis_client.publish("chat", json.dumps(msg))
