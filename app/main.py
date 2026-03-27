@@ -56,7 +56,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
     try:
         while True:
             data = await websocket.receive_json()
-            await manager.handle_message(data)  # ✅ FIXED
+            await manager.handle_message(data)  
 
     except:
         manager.disconnect(user_id, websocket)
