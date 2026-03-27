@@ -14,7 +14,7 @@ async def send_message(sender: str, message: MessageCreate):
         "sender": sender,
         "receiver": message.receiver,
         "content": message.content,
-        "image": None,  # ✅ ADD THIS
+        "image": None,  
     }
 
     result = await messages_collection.insert_one(msg)
@@ -50,7 +50,7 @@ async def send_group_message(sender: str, message: dict):
         "sender": sender,
         "group": message["group"],
         "content": message["content"],
-        "image": None,  # ✅ ADD THIS
+        "image": None, 
     }
 
     result = await messages_collection.insert_one(msg)

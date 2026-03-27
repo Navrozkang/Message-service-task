@@ -25,10 +25,9 @@ async def upload_image(
     with open(filepath, "wb") as f:
         f.write(await file.read())
 
-    # ✅ FULL URL (VERY IMPORTANT)
     image_url = f"http://127.0.0.1:8000/uploads/{filename}"
 
-    # ✅ SAME STRUCTURE AS TEXT MESSAGE
+ 
     msg = {
         "type": "group" if group else "personal",
         "sender": sender,
@@ -41,7 +40,7 @@ async def upload_image(
     result = await messages_collection.insert_one(msg)
     msg["_id"] = str(result.inserted_id)
 
-    # ✅ send via redis (so websocket works)
+  
     redis_client.publish("chat", json.dumps(msg))
 
     return {"image_url": image_url}
