@@ -14,6 +14,16 @@ const imageInput = document.getElementById("imageInput");
 const previewContainer = document.getElementById("previewContainer");
 const previewImage = document.getElementById("previewImage");
 const fileName = document.getElementById("fileName");
+const chatHeader = document.getElementById("chat-header");
+
+const imageModal = document.getElementById("imageModal");
+const modalImage = document.getElementById("modalImage");
+
+function logout() {
+  localStorage.removeItem("username");
+  if (socket) socket.close();
+  window.location.href = "/";
+}
 
 imageInput.addEventListener("change", () => {
   const file = imageInput.files[0];
@@ -34,6 +44,21 @@ function removeImage() {
   previewContainer.classList.add("hidden");
   fileName.innerText = "";
 }
+
+function openImageModal(src) {
+  modalImage.src = src;
+  imageModal.classList.add("active");
+}
+
+function closeImageModal() {
+  imageModal.classList.remove("active");
+}
+
+imageModal.addEventListener("click", (e) => {
+  if (e.target === imageModal) {
+    closeImageModal();
+  }
+});
 
 socket.onmessage = function (event) {
   let data = JSON.parse(event.data);
@@ -66,6 +91,7 @@ async function loadUsers() {
       selectedUser = u.username;
       selectedGroup = null;
 
+      chatHeader.innerHTML = `Chat with <strong>${selectedUser}</strong>`;
       document.getElementById("messages").innerHTML = "";
 
       let res = await fetch(
@@ -102,6 +128,7 @@ async function loadGroups() {
       selectedGroup = g.name;
       selectedUser = null;
 
+      chatHeader.innerHTML = `👥 <strong>${selectedGroup}</strong>`;
       document.getElementById("messages").innerHTML = "";
 
       let res = await fetch(`/messages/group/${selectedGroup}`);
@@ -127,6 +154,8 @@ function addMessage(sender, msg) {
 
   div.appendChild(bubble);
   document.getElementById("messages").appendChild(div);
+
+  scrollToBottom();
 }
 
 function addImageMessage(sender, imageUrl) {
@@ -140,10 +169,20 @@ function addImageMessage(sender, imageUrl) {
   img.src = imageUrl;
   img.className = "chat-image";
 
+  img.onclick = () => openImageModal(imageUrl);
+
+  let downloadBtn = document.createElement("a");
+  downloadBtn.href = imageUrl;
+  downloadBtn.download = "chat-image";
+  downloadBtn.innerText = "⬇️ Download";
+  downloadBtn.className = "download-btn";
+
   bubble.appendChild(img);
+  bubble.appendChild(downloadBtn);
   div.appendChild(bubble);
 
   document.getElementById("messages").appendChild(div);
+  scrollToBottom();
 }
 
 async function sendCombined() {
@@ -188,6 +227,19 @@ async function sendCombined() {
   input.value = "";
   removeImage();
 }
+
+function scrollToBottom() {
+  let messages = document.getElementById("messages");
+  messages.scrollTop = messages.scrollHeight;
+}
+
+document
+  .getElementById("messageInput")
+  .addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      sendCombined();
+    }
+  });
 
 loadUsers();
 loadGroups();

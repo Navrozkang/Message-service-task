@@ -650,3 +650,27 @@ body {
 .hidden {
   display: none;
 }
+
+.chat-image {
+  max-width: 200px;
+  border-radius: 8px;
+  margin-top: 5px;
+}
+
+.download-btn {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  text-decoration: underline;
+}
+
+.preview img {
+  max-width: 100px;
+  border-radius: 6px;
+}

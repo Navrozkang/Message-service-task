@@ -45,11 +45,11 @@ async def get_groups():
 
     return groups
 
+
 @router.post("/add-member")
 async def add_member(data: dict):
     await groups_collection.update_one(
-        {"name": data["group"]},
-        {"$addToSet": {"members": data["member"]}}
+        {"name": data["group"]}, {"$addToSet": {"members": data["member"]}}
     )
     return {"msg": "Member added"}
 
@@ -57,7 +57,6 @@ async def add_member(data: dict):
 @router.post("/remove-member")
 async def remove_member(data: dict):
     await groups_collection.update_one(
-        {"name": data["group"]},
-        {"$pull": {"members": data["member"]}}
+        {"name": data["group"]}, {"$pull": {"members": data["member"]}}
     )
     return {"msg": "Member removed"}
